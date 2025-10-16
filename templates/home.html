@@ -3,10 +3,20 @@
     <head>
         <title>State Facts</title>
     </head>
-    <body>
+	{% extends "layout.html" %}
+
+{% set active_page = "home" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <!--page content-->
+
+    <body id="body1">
 		<h1>Electricity Companies</h1>
        
 	   <p>This site has data from approximately 2000 electricity companies with their demand, customer, revenue, and etc report.</p>
 
     </body>
 </html>
+{% endblock %}
