@@ -15,10 +15,18 @@ def render_page1():
 def render_page2():
     return render_template('page2.html')
     
-with open('types.json', encoding='utf-8') as types:
-type_data = json.load(types) 
+with open('electricity.json', encoding='utf-8') as electricity:
+    electricity_data = json.load(electricity) 
 
-print(type_data) #word_data is a list of dictionaries
+#print(electricity_data) #word_data is a list of dictionaries
     
 if __name__=="__main__":
-    app.run(debug=False)
+    app.run(debug=True)
+    
+    
+    
+    
+    
+    # do some research about the  source of the data, the significance of the data, and how it is calculated and regulated
+    
+   
