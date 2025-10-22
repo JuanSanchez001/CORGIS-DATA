@@ -1,7 +1,28 @@
-.nav-item{
-	color: white !important;
+.custom-navbar-bg{
+	background-color: SlateGrey!important;
+}
+
+.nav-link{
+	color: white;
+}
+.navbar-brand{
+	color: white;
 }
 
 #body1{
-	background-color: azure !important;
+	background-color: PowderBlue !important;
+}
+
+#body2{
+	background-color: PowderBlue !important;
+}
+
+#homeh1{
+	margin-left: 20px;
+	margin-top: 20px;
+}
+
+p{
+	margin-left: 20px;
+	margin-top: 20px;
 }

@@ -7,11 +7,21 @@
 {% block content %}
     <!--page content-->
 
-    <body>
+    <body id="body2">
+	<h1>Electricity Sold Per City In 2017</h1>
+	<h4>Select a State and a City</h4> 
 		
-       
-	   <p>This is A TEST.</p>
+    <form action="/sales">
+          <select name="state" required> <!-- add onchange="this.form.submit()" to submit/update the form when an option is selected.  Usefull for then displaying county options. -->
+            {{ state_options }}
+          </select>
+		    </form>
+		  <input type="submit" value="Get Sales">
+      
+		<div id="sales">
+            <p>{{ sales }}</p>
+        </div>
 
     </body>
-</html>
+
 {% endblock %}
