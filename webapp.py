@@ -53,15 +53,15 @@ def get_state_options():
     return options    
     
 def name_total_sales(state):
-    """Return the name of a county in the given state with the highest percent of under 18 year olds."""
+    """Return the name of a county in the given state with the highest percent of sales."""
     with open('electricity.json') as electricity_data:
         names = json.load(electricity_data)
     highest=0
     name = ""
     for t in names:
         if t["Utility"]["State"] == state:
-           if t["Retail"],["Total"],["Sales"] > highest:
-                highest = ["Retail"],["Total"],["Sales"]
+            if t[["Retail", ["Total", ["Sales"]]]] > highest:
+                highest = t[["Retail", ["Total", ["Sales"]]]]
                 name = t["Utility"]["Name"]
     return name
     
