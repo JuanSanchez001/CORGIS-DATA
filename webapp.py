@@ -13,7 +13,8 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     states = get_state_options()
-    return render_template('page1.html', state_options=states)#, county_options=counties')
+    names = get_name_options()
+    return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
     
 @app.route("/p2")
 def render_page2():
@@ -27,16 +28,12 @@ def render_page3():
 def render_sales():
     states = get_state_options()
     state = request.args.get('state')
+    names = get_name_options()
     name = request.args.get('name')
-   # names = get_name_options()
-    #county = request.args.get('county')
-    name = name_total_sales(state)
-  #  county1 = county_most_bachelors_or_higher(state)
-    sale = "In " + state + ", the county with the highest percentage of under 18 year olds is " + name + "."
-    #sale = name + "in " + state + "has" + sales + "."
-   # sale1 = "In " + state + ", the county with the highest percentage of people with a bachelor's degree or higher is " + name1 + "."
+    county = name_retail_sale(state)
+    sale= "In " + state + ", the electrical utility " + county[0] + " has sold (" + str(county[1]) + ") megawatts of electricity" + "."
     
-    return render_template('page1.html', state_options=states, sales=sale)# county_options=counties, 
+    return render_template('page1.html', state_options=states, name_options=names, sales=sale)# county_options=counties, 
     
 def get_state_options():
     """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
@@ -44,7 +41,7 @@ def get_state_options():
         names = json.load(electricity_data)
     states=[]
     for n in names:
-        if n["Utility"]["State"] not in states:
+        if n["Utility"]["State"] not in states: 
             states.append(n["Utility"]["State"])
     states.sort()#added ai to sort
     options=""
@@ -52,7 +49,21 @@ def get_state_options():
         options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
     return options    
     
-def name_total_sales(state):
+def get_name_options():
+    """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
+    with open('electricity.json') as electricity_data:
+        states = json.load(electricity_data)
+    names=[]
+    for s in states:
+        if s["Utility"]["Name"] not in names:
+            names.append(s["Utility"]["Name"])
+    names.sort()#added ai to sort
+    options=""
+    for n in names:
+        options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
+    return options    
+    
+def name_retail_sale(state):
     """Return the name of a county in the given state with the highest percent of sales."""
     with open('electricity.json') as electricity_data:
         names = json.load(electricity_data)
@@ -60,15 +71,11 @@ def name_total_sales(state):
     name = ""
     for t in names:
         if t["Utility"]["State"] == state:
-            if t[["Retail", ["Total", ["Sales"]]]] > highest:
-                highest = t[["Retail", ["Total", ["Sales"]]]]
+            if t["Retail"]["Total"]["Sales"] > highest:
+                highest = t["Retail"]["Total"]["Sales"]
                 name = t["Utility"]["Name"]
-    return name
+    return (name, highest)
     
-#with open('electricity.json', encoding='utf-8') as electricity:
-    #electricity_data = json.load(electricity) 
-
-#print(electricity_data) #word_data is a list of dictionaries
 def is_localhost():
     """ Determines if app is running on localhost or not
     Adapted from: https://stackoverflow.com/questions/17077863/how-to-see-if-a-flask-app-is-being-run-on-localhost
