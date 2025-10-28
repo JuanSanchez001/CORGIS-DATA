@@ -13,12 +13,17 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     states = get_state_options()
-    names = get_name_options()
+    state = None
+    names = get_name_options(state)
+    name = None
     return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
     
 @app.route("/p2")
 def render_page2():
-    return render_template('page2.html')
+    states = get_state_options()
+
+    names = get_name_options(state)
+    return render_template('page2.html', state_options=states, name_options=names)
     
 @app.route("/p3")
 def render_page3():
@@ -28,53 +33,67 @@ def render_page3():
 def render_sales():
     states = get_state_options()
     state = request.args.get('state')
-    names = get_name_options()
+    names = get_name_options(state)
     name = request.args.get('name')
-    county = name_retail_sale(state)
-    sale= "In " + state + ", the electrical utility " + county[0] + " has sold (" + str(county[1]) + ") megawatts of electricity" + "."
+    #county = name_retail_sale(state, name)
+    county = customers_per_utility(state)
+    #demand = demand_per_utility(state)
+    #sale= "In " + state + ", the electrical utility " + county[0] + " sold (" + str(county[1]) + ") megawatts of electricity" + "."
+    customer= "In " + state + ", the electrical utility " + county[0] + " had (" + str(county[1]) + ") total retail customers in 2017" + "."
+    #peaks = "In" + state + "," + name + " the electricity demand is" + demand[0] + " and the demand in the winter is" + str(demand[1]) + "."
     
-    return render_template('page1.html', state_options=states, name_options=names, sales=sale)# county_options=counties, 
+    return render_template('page1.html', state_options=states, name_options=names, customers=customer)
+    #sales=sale)# county_options=counties, 
+    
     
 def get_state_options():
-    """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
-    with open('electricity.json') as electricity_data:
-        names = json.load(electricity_data)
-    states=[]
-    for n in names:
-        if n["Utility"]["State"] not in states: 
-            states.append(n["Utility"]["State"])
-    states.sort()#added ai to sort
-    options=""
+    with open('electricity.json') as file:
+        utilities = json.load(file)
+    states = sorted({util['Utility']['State'] for util in utilities if 'Utility' in util and 'State' in util['Utility']})
+    options = ""
     for s in states:
-        options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
-    return options    
-    
-def get_name_options():
-    """Return the html code for the drop down menu.  Each option is a state abbreviation from the demographic data."""
-    with open('electricity.json') as electricity_data:
-        states = json.load(electricity_data)
-    names=[]
-    for s in states:
-        if s["Utility"]["Name"] not in names:
-            names.append(s["Utility"]["Name"])
-    names.sort()#added ai to sort
-    options=""
+        options += Markup(f'<option value="{s}">{s}</option>')
+    return options
+
+def get_name_options(state):
+    with open('electricity.json') as file:
+        utilities = json.load(file)
+    if state:
+        names = sorted({util['Utility']['Name'] for util in utilities if util['Utility']['State'] == state})
+    else:
+        names = sorted({util['Utility']['Name'] for util in utilities})
+    options = ""
     for n in names:
-        options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
-    return options    
+        options += Markup(f'<option value="{n}">{n}</option>')
+    return options
+ 
+
+  
+#def name_retail_sale(state):
+ #   """Return the name of a county in the given state with the highest percent of sales."""
+  #  with open('electricity.json') as electricity_data:
+   #     names = json.load(electricity_data)
+    #highest=0
+    #name = ""
+    #for t in names:
+     #   if t["Utility"]["State"] == state:
+      #      if t["Retail"]["Total"]["Sales"] > highest:
+       #         highest = t["Retail"]["Total"]["Sales"]
+        #        name = t["Utility"]["Name"]
+    #return (name, highest)
     
-def name_retail_sale(state):
-    """Return the name of a county in the given state with the highest percent of sales."""
+def customers_per_utility(state):
     with open('electricity.json') as electricity_data:
-        names = json.load(electricity_data)
+        customers = json.load(electricity_data)
     highest=0
-    name = ""
-    for t in names:
-        if t["Utility"]["State"] == state:
-            if t["Retail"]["Total"]["Sales"] > highest:
-                highest = t["Retail"]["Total"]["Sales"]
-                name = t["Utility"]["Name"]
+    for c in customers:
+        if c["Utility"]["State"] == state:
+            if c["Retail"]["Total"]["Customers"] > highest:
+                highest = c["Retail"]["Total"]["Customers"]
+                name = c["Utility"]["Name"]
     return (name, highest)
+    
+        
     
 def is_localhost():
     """ Determines if app is running on localhost or not
@@ -93,4 +112,17 @@ if __name__=="__main__":
     
     # do some research about the  source of the data, the significance of the data, and how it is calculated and regulated
     
-   
+       
+def name_retail_sale(state, name):
+    """Return sold electricity by megawatts of a county in the given state."""
+    with open('electricity.json') as electricity_data:
+        totals = json.load(electricity_data)
+    highest =0
+    total = ""
+    for t in totals:
+        if t["Utility"]["State"] == state:
+            if t["Utility"]["Name"] == name:
+                if t["Retail"]["Total"]["Sales"] == highest:
+                    highest = t["Retail"]["Total"]["Sales"]
+                    total = t["Utility"]["Name"]["State"]
+    return (total, highest)
