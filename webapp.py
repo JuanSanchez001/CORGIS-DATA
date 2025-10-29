@@ -13,9 +13,9 @@ def render_main():
 @app.route("/p1")
 def render_page1():
     states = get_state_options()
-    state = None
-    names = get_name_options(state)
-    name = None
+   
+    names = get_name_options(states)
+
     return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
     
 @app.route("/p2")
@@ -29,27 +29,35 @@ def render_page2():
 def render_page3():
     return render_template('page3.html')
     
-@app.route('/sales')
-def render_sales():
+@app.route('/utilities')
+def render_utilities():
     states = get_state_options()
     state = request.args.get('state')
     names = get_name_options(state)
     name = request.args.get('name')
     #county = name_retail_sale(state, name)
-    county = customers_per_utility(state)
     #demand = demand_per_utility(state)
     #sale= "In " + state + ", the electrical utility " + county[0] + " sold (" + str(county[1]) + ") megawatts of electricity" + "."
-    customer= "In " + state + ", the electrical utility " + county[0] + " had (" + str(county[1]) + ") total retail customers in 2017" + "."
     #peaks = "In" + state + "," + name + " the electricity demand is" + demand[0] + " and the demand in the winter is" + str(demand[1]) + "."
     
-    return render_template('page1.html', state_options=states, name_options=names, customers=customer)
+    return render_template('page1.html', state_options=states, name_options=names)
+    
+    
+@app.route('/customers')
+def render_customers():
+    state = request.args.get('state')
+    name = request.args.get('name')
+    number_of_c = customers_per_utility(state, name)
+    customer = "This electrical utility " + number_of_c[0] + " had (" + str(number_of_c[1]) + ") total retail customers in 2017" + "."
+    
+    return render_template('page1.html', customers=customer)
     #sales=sale)# county_options=counties, 
     
     
 def get_state_options():
     with open('electricity.json') as file:
         utilities = json.load(file)
-    states = sorted({util['Utility']['State'] for util in utilities if 'Utility' in util and 'State' in util['Utility']})
+    states = sorted({u['Utility']['State'] for u in utilities if 'Utility' in u and 'State' in u['Utility']})
     options = ""
     for s in states:
         options += Markup(f'<option value="{s}">{s}</option>')
@@ -59,9 +67,9 @@ def get_name_options(state):
     with open('electricity.json') as file:
         utilities = json.load(file)
     if state:
-        names = sorted({util['Utility']['Name'] for util in utilities if util['Utility']['State'] == state})
+        names = sorted({u['Utility']['Name'] for u in utilities if u['Utility']['State'] == state})
     else:
-        names = sorted({util['Utility']['Name'] for util in utilities})
+        names = sorted({u['Utility']['Name'] for u in utilities})
     options = ""
     for n in names:
         options += Markup(f'<option value="{n}">{n}</option>')
@@ -82,16 +90,15 @@ def get_name_options(state):
         #        name = t["Utility"]["Name"]
     #return (name, highest)
     
-def customers_per_utility(state):
-    with open('electricity.json') as electricity_data:
-        customers = json.load(electricity_data)
+def customers_per_utility(state, name):
+    with open('electricity.json') as file:
+        customers = json.load(file) 
     highest=0
     for c in customers:
-        if c["Utility"]["State"] == state:
+        if c["Utility"]["State"] == state and c["Utility"]["Name"] == name:
             if c["Retail"]["Total"]["Customers"] > highest:
                 highest = c["Retail"]["Total"]["Customers"]
-                name = c["Utility"]["Name"]
-    return (name, highest)
+    return highest
     
         
     
@@ -113,16 +120,16 @@ if __name__=="__main__":
     # do some research about the  source of the data, the significance of the data, and how it is calculated and regulated
     
        
-def name_retail_sale(state, name):
-    """Return sold electricity by megawatts of a county in the given state."""
-    with open('electricity.json') as electricity_data:
-        totals = json.load(electricity_data)
-    highest =0
-    total = ""
-    for t in totals:
-        if t["Utility"]["State"] == state:
-            if t["Utility"]["Name"] == name:
-                if t["Retail"]["Total"]["Sales"] == highest:
-                    highest = t["Retail"]["Total"]["Sales"]
-                    total = t["Utility"]["Name"]["State"]
-    return (total, highest)
+#def name_retail_sale(state, name):
+    #"""Return sold electricity by megawatts of a county in the given state."""
+   # with open('electricity.json') as electricity_data:
+   #     totals = json.load(electricity_data)
+  #  highest =0
+  #  total = ""
+ #   for t in totals:
+    #    if t["Utility"]["State"] == state:
+   #         if t["Utility"]["Name"] == name:
+       #         if t["Retail"]["Total"]["Sales"] == highest:
+           #         highest = t["Retail"]["Total"]["Sales"]
+      #              total = t["Utility"]["Name"]["State"]
+   # return (total, highest)
