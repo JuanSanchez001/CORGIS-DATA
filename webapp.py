@@ -48,16 +48,19 @@ def render_customers():
     state = request.args.get('state')
     name = request.args.get('name')
     number_of_c = customers_per_utility(state, name)
-    customer = "This electrical utility " + number_of_c[0] + " had (" + str(number_of_c[1]) + ") total retail customers in 2017" + "."
+    number_of_c_str = str(number_of_c)
+    customer = "This electrical utility had (" + number_of_c_str + ") total retail customers in 2017" + "."
     
     return render_template('page1.html', customers=customer)
     #sales=sale)# county_options=counties, 
     
     
+
 def get_state_options():
     with open('electricity.json') as file:
         utilities = json.load(file)
-    states = sorted({u['Utility']['State'] for u in utilities if 'Utility' in u and 'State' in u['Utility']})
+    # Use set comprehension to get unique states, then sort
+    states = sorted({u["Utility"]["State"] for u in utilities})
     options = ""
     for s in states:
         options += Markup(f'<option value="{s}">{s}</option>')
@@ -66,15 +69,13 @@ def get_state_options():
 def get_name_options(state):
     with open('electricity.json') as file:
         utilities = json.load(file)
-    if state:
-        names = sorted({u['Utility']['Name'] for u in utilities if u['Utility']['State'] == state})
-    else:
-        names = sorted({u['Utility']['Name'] for u in utilities})
+    # Collect unique utility names for the given state
+    names = sorted({u["Utility"]["Name"] for u in utilities if u["Utility"]["State"] == state})
     options = ""
     for n in names:
-        options += Markup(f'<option value="{n}">{n}</option>')
+        options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
     return options
- 
+
 
   
 #def name_retail_sale(state):
@@ -95,10 +96,13 @@ def customers_per_utility(state, name):
         customers = json.load(file) 
     highest=0
     for c in customers:
-        if c["Utility"]["State"] == state and c["Utility"]["Name"] == name:
-            if c["Retail"]["Total"]["Customers"] > highest:
+     print("Checking:", c["Utility"]["State"], c["Utility"]["Name"])  # debug print
+     if c["Utility"]["State"] == state and c["Utility"]["Name"] == name:
+        print("Match found with customers:", c["Retail"]["Total"]["Customers"])  # debug print
+        if c["Retail"]["Total"]["Customers"] > highest:
                 highest = c["Retail"]["Total"]["Customers"]
-    return highest
+               
+    return  highest
     
         
     
@@ -133,3 +137,30 @@ if __name__=="__main__":
            #         highest = t["Retail"]["Total"]["Sales"]
       #              total = t["Utility"]["Name"]["State"]
    # return (total, highest)
+   
+  # def get_state_options():
+   # with open('electricity.json') as file:
+   #     utilities = json.load(file)
+  #  states=[]
+  #  for u in utilities:
+   #     if u["State"] not in states:
+  #          states.append.sorted(u["State"])
+   # states = sorted({u['Utility']['State'] for u in utilities if 'Utility' in u and 'State' in u['Utility']})
+   # options = ""
+   # for s in states:
+    #   options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
+    #return options
+
+#def get_name_options(state):
+  #  with open('electricity.json') as file:
+   #     utilities = json.load(file)
+   # utilities=[]
+   # for u in utilities:
+  #  if state:
+       # names = sorted({u['Utility']['Name'] for u in utilities if u['Utility']['State'] == state})
+      #  if u["Utilities"] not in states:        
+      #3      utilities.append.sorted(u["Utility"])
+   # options = ""
+   # for n in utilities:
+    #      options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
+  #  return options
