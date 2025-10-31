@@ -14,15 +14,14 @@ def render_main():
 def render_page1():
     states = get_state_options()
    
-    names = get_name_options(states)
-
+    names = get_name_options(state)
     return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
     
 @app.route("/p2")
 def render_page2():
     states = get_state_options()
 
-    names = get_name_options(state)
+    names = get_name_options(states)
     return render_template('page2.html', state_options=states, name_options=names)
     
 @app.route("/p3")
@@ -40,25 +39,24 @@ def render_utilities():
     #sale= "In " + state + ", the electrical utility " + county[0] + " sold (" + str(county[1]) + ") megawatts of electricity" + "."
     #peaks = "In" + state + "," + name + " the electricity demand is" + demand[0] + " and the demand in the winter is" + str(demand[1]) + "."
     
-    return render_template('page1.html', state_options=states, name_options=names)
+    return render_template('page2.html', state_options=states, name_options=names)
     
     
 @app.route('/customers')
 def render_customers():
     state = request.args.get('state')
     name = request.args.get('name')
-    number_of_c = customers_per_utility(state, name)
-    number_of_c_str = str(number_of_c)
-    customer = "This electrical utility had (" + number_of_c_str + ") total retail customers in 2017" + "."
+    current_value = customers_per_utility(name)
+    customer = f"{name} had ({current_value}) total retail customers in 2017."
     
-    return render_template('page1.html', customers=customer)
+    return render_template('page2.html', customers=customer)
     #sales=sale)# county_options=counties, 
     
     
 
 def get_state_options():
-    with open('electricity.json') as file:
-        utilities = json.load(file)
+    with open('electricity.json') as electricity_data:
+        utilities = json.load(electricity_data)
     # Use set comprehension to get unique states, then sort
     states = sorted({u["Utility"]["State"] for u in utilities})
     options = ""
@@ -67,8 +65,8 @@ def get_state_options():
     return options
 
 def get_name_options(state):
-    with open('electricity.json') as file:
-        utilities = json.load(file)
+    with open('electricity.json') as electricity_data:
+        utilities = json.load(electricity_data)
     # Collect unique utility names for the given state
     names = sorted({u["Utility"]["Name"] for u in utilities if u["Utility"]["State"] == state})
     options = ""
@@ -91,19 +89,12 @@ def get_name_options(state):
         #        name = t["Utility"]["Name"]
     #return (name, highest)
     
-def customers_per_utility(state, name):
-    with open('electricity.json') as file:
-        customers = json.load(file) 
-    highest=0
-    for c in customers:
-     print("Checking:", c["Utility"]["State"], c["Utility"]["Name"])  # debug print
-     if c["Utility"]["State"] == state and c["Utility"]["Name"] == name:
-        print("Match found with customers:", c["Retail"]["Total"]["Customers"])  # debug print
-        if c["Retail"]["Total"]["Customers"] > highest:
-                highest = c["Retail"]["Total"]["Customers"]
-               
-    return  highest
-    
+def customers_per_utility(name):
+    with open('electricity.json') as electricity_data:
+        utilities = json.load(electricity_data)
+    for u in utilities:
+        if u["Utility"]["Name"] == name:
+            return u["Retail"]["Total"]["Customers"]
         
     
 def is_localhost():

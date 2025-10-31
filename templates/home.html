@@ -7,21 +7,24 @@
 {% block content %}
     <!--page content-->
 
-    <body id="body1">
+
 		<h1 id="homeh1">The EIA's report on over 2000 electric utilities in 2017</h1>
        
-		<p>This data is from 2017 report where it covers approximately 2000 electric utilities with their demand, customer, revenue, and etc report.</p>
-		<p> The source of the electricity.json file comes from <a href="https://www.eia.gov/electricity/data/eia861/">The U.S. Energy Information Administration</a>.
+		<p>The dataset from <cite><a href="https://corgis-edu.github.io/corgis/json/electricity/">Corgis Datasets</a></cite> is from a 2017 EIA report where it covers approximately 2000 electric utilities with their demand, customer, revenue, and etc report.</p>
+		<p> The source of the electricity.json file comes from <cite><a href="https://www.eia.gov/electricity/data/eia861/"></cite>The U.S. Energy Information Administration</a>.
         They collect, analyze, and disseminate independent and impartial energy information.
         They use the data to provide policy-independent data, forecasts, and analyses to promote sound policy making,
         efficient markets, and public understanding regarding energy, and its interaction with the economy and the environment.</p>
 		<br>
-		<p>In order to calculate and regulate this data each year, the EIA requires electric utilities to report and complete standardized surveys (i.e., forms) to collect information. 
+		<p>"In order to calculate and regulate this data each year, the EIA requires electric utilities to report and complete standardized surveys (i.e., forms) to collect information. 
 	    They also use statistical modeling, and a combination of specific, standardized data collection forms and processing methods, 
-        along with some third-party information in order to regulate their data. <a href="https://www.energy.gov/articles/what-eia-and-what-does-it-do">(Source)</a></p>
+        along with some third-party information in order to regulate their data". <cite><a href="https://www.energy.gov/articles/what-eia-and-what-does-it-do">(Source)</a></cite></p>
 		<br>
-		<p>The Transportation section from the 2017 report does not contain any data which is mostly likely because these utilities do not offer transportation of electricity and therefore cannot gain revenue from it. This data will be marked as N/A or deleted.</p>
-	</body>
+		<p>The information that this file contains are the names and location of electircal utilities. The amount of customers, sales, and revenue of electricity from each utility.
+		It also contains information on where the electricity goes to such as for industrial, residencial and commercial uses. The generation and loss of electricity is also included,
+		along with a difference in electricity demand for each utility in the winter and summer. This file contains a Transportation section which does not contain any data and 
+		is mostly likely because most utilities do not offer transportation of electricity and therefore cannot gain revenue from it. This data is marked as 0.0 or deleted.</p>
+
 
 {% endblock %}
 
