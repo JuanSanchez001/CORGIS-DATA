@@ -6,12 +6,9 @@
 
 {% block content %}
     <!--page content-->
-
-    <body id="body2">
-	<h1>Electricity Sold Per City In 2017</h1>
+<h1>Totals Per Utility In 2017</h1>
 	<h4>Select a State and a Electrical Utility</h4> 
-		
-    <form action="/utilities">
+ <form action="/utilities">
           <select name="state" required> <!-- add onchange="this.form.submit()" to submit/update the form when an option is selected.  Usefull for then displaying county options. -->
             {{ state_options }}
           </select>
@@ -22,15 +19,12 @@
 		   <select name="name" option> <!-- add onchange="this.form.submit()" to submit/update the form when an option is selected.  Usefull for then displaying county options. -->
             {{ name_options }}
           </select>
-		  <input type="submit" value="Get total Customers">
+		  <input type="submit" value="Get Totals">
         </form>
 		<div id="customers">
-            <p>{{ customers }}</p>
+		    <p>{{ customers }}</p>
+            <p>{{ customers1 }}</p>
+            <p>{{ customers2 }}</p>
+            <p>{{ customers3 }}</p>
         </div>
-		<!--<div id="sales">
-            <p>{{ sales }}</p>
-        </div>-->
-		
-    </body>
-
 {% endblock %}
