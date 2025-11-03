@@ -14,7 +14,7 @@ def render_main():
 def render_page1():
     states = get_state_options()
    
-    names = get_name_options(state)
+    names = get_name_options(states)
     return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
     
 @app.route("/p2")
@@ -37,10 +37,10 @@ def render_utilities():
     #county = name_retail_sale(state, name)
     #demand = demand_per_utility(state)
     #sale= "In " + state + ", the electrical utility " + county[0] + " sold (" + str(county[1]) + ") megawatts of electricity" + "."
-    #peaks = "In" + state + "," + name + " the electricity demand is" + demand[0] + " and the demand in the winter is" + str(demand[1]) + "."
+   
+    return render_template('page1.html', state_options=states, name_options=names)
     
-    return render_template('page1.html', 'page2.html', state_options=states, name_options=names)
-       
+#https://www.perplexity.ai/search/why-is-this-giving-me-this-err-s_sLBpCpTs6xQP9Fqu_vtQ  (using f-strings)       
 @app.route('/customers')
 def render_customers():
     state = request.args.get('state')
@@ -62,7 +62,7 @@ def render_sources():
     state = request.args.get('state') 
     name = request.args.get('name') 
     big_producer = highest_electricity_producing_utility(state)
-    source = f"The Utility with the highest electricty obtained from itself and outside producer was {big_producer[0]} with ({big_producer[1]}) megawatt hours"
+    source = f"The Utility with the highest electricty obtained from itself and outside producer in this state was {big_producer[0]} with ({big_producer[1]}) megawatt hours."
     
     return render_template('page2.html', sources=source) 
     
@@ -71,7 +71,6 @@ def render_sources():
 def get_state_options():
     with open('electricity.json') as electricity_data:
         utilities = json.load(electricity_data)
-    # Use set comprehension to get unique states, then sort
     states = sorted({u["Utility"]["State"] for u in utilities})
     options = ""
     for s in states:
@@ -81,7 +80,7 @@ def get_state_options():
 def get_name_options(state):
     with open('electricity.json') as electricity_data:
         utilities = json.load(electricity_data)
-    # Collect unique utility names for the given state
+    # it sorts it and then looks to see if the state they selected
     names = sorted({u["Utility"]["Name"] for u in utilities if u["Utility"]["State"] == state})
     options = ""
     for n in names:
@@ -147,51 +146,3 @@ def is_localhost():
 
 if __name__=="__main__":
     app.run(debug=True)
-    
-    
-    
-    
-    
-
-   
-  # def get_state_options():
-   # with open('electricity.json') as file:
-   #     utilities = json.load(file)
-  #  states=[]
-  #  for u in utilities:
-   #     if u["State"] not in states:
-  #          states.append.sorted(u["State"])
-   # states = sorted({u['Utility']['State'] for u in utilities if 'Utility' in u and 'State' in u['Utility']})
-   # options = ""
-   # for s in states:
-    #   options += Markup("<option value=\"" + s + "\">" + s + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
-    #return options
-
-#def get_name_options(state):
-  #  with open('electricity.json') as file:
-   #     utilities = json.load(file)
-   # utilities=[]
-   # for u in utilities:
-  #  if state:
-       # names = sorted({u['Utility']['Name'] for u in utilities if u['Utility']['State'] == state})
-      #  if u["Utilities"] not in states:        
-      #3      utilities.append.sorted(u["Utility"])
-   # options = ""
-   # for n in utilities:
-    #      options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
-  #  return options
-
-
-#def county_most_under_18(state):
-   # """Return the name of a county in the given state with the highest percent of under 18 year olds."""
-  #  with open('demographics.json') as demographics_data:
-  #      counties = json.load(demographics_data)
-  #  highest=0
-  #  county = ""
-  #  for c in counties:
-    #    if c["State"] == state:
-      #      if c["Age"]["Percent Under 18 Years"] > highest:
-       #         highest = c["Age"]["Percent Under 18 Years"]
-           #     county = c["County"]
-  #  return county       
-    
