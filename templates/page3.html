@@ -31,7 +31,7 @@ var chart = new CanvasJS.Chart("chartContainer", {
 		name: "Winter",
 		color: "CornflowerBlue",
 		<!--Make jinja here below and then use def to get info i want out, and then use the same datapoints thing below and add it to python but change y and x to be the information I want and prob make a list of states since only 50 and not a billion-->
-		dataPoints: [
+		dataPoints: [{ winter }]
 			{ y: 212, label: "Italy" },
 			{ y: 186, label: "China" },
 			{ y: 272, label: "France" },

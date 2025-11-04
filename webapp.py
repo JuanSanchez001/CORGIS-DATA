@@ -98,56 +98,7 @@ def get_name_options(state):
 			#{ y: 165, label: "Russia" },
 			#{ y: 896, label: "CA" } 
 		#]
-       '''  { y: 212, label: "Alabama" }, (states)
-  { y: 186, label: "Alaska" },
-  { y: 272, label: "Arizona" },
-  { y: 299, label: "Arkansas" },
-  { y: 270, label: "California" },
-  { y: 165, label: "Colorado" },
-  { y: 896, label: "Connecticut" },
-  { y: 212, label: "Delaware" },
-  { y: 186, label: "Florida" },
-  { y: 272, label: "Georgia" },
-  { y: 299, label: "Hawaii" },
-  { y: 270, label: "Idaho" },
-  { y: 165, label: "Illinois" },
-  { y: 896, label: "Indiana" },
-  { y: 212, label: "Iowa" },
-  { y: 186, label: "Kansas" },
-  { y: 272, label: "Kentucky" },
-  { y: 299, label: "Louisiana" },
-  { y: 270, label: "Maine" },
-  { y: 165, label: "Maryland" },
-  { y: 896, label: "Massachusetts" },
-  { y: 212, label: "Michigan" },
-  { y: 186, label: "Minnesota" },
-  { y: 272, label: "Mississippi" },
-  { y: 299, label: "Missouri" },
-  { y: 270, label: "Montana" },
-  { y: 165, label: "Nebraska" },
-  { y: 896, label: "Nevada" },
-  { y: 212, label: "New Hampshire" },
-  { y: 186, label: "New Jersey" },
-  { y: 272, label: "New Mexico" },
-  { y: 299, label: "New York" },
-  { y: 270, label: "North Carolina" },
-  { y: 165, label: "North Dakota" },
-  { y: 896, label: "Ohio" },
-  { y: 212, label: "Oklahoma" },
-  { y: 186, label: "Oregon" },
-  { y: 272, label: "Pennsylvania" },
-  { y: 299, label: "Rhode Island" },
-  { y: 270, label: "South Carolina" },
-  { y: 165, label: "South Dakota" },
-  { y: 896, label: "Tennessee" },
-  { y: 212, label: "Texas" },
-  { y: 186, label: "Utah" },
-  { y: 272, label: "Vermont" },
-  { y: 299, label: "Virginia" },
-  { y: 270, label: "Washington" },
-  { y: 165, label: "West Virginia" },
-  { y: 896, label: "Wisconsin" },
-  { y: 212, label: "Wyoming" }'''
+    
         
         #dataPoints: [
 			#{ y: 236, label: "Italy" },
@@ -193,13 +144,46 @@ def highest_electricity_producing_utility(state):
     			name = u["Utility"]["Name"]
     return (name, highest)
     	
-def demand_average_summer_and_winter()
+'''def demand_average_summer_and_winter():
     with open('electricity.json') as electricity_data:
-        utilities = json.load(electricity_data)                
+        s_demand = json.load(electricity_data)
+    average_demand=[]
+    for s in s_demand:
+        s_demand = s['Demand']['Summer Peak']
+        
+    return average_demand'''
+      
+with open('electricity.json', encoding='utf-8') as file:
+    data = json.load(file)
+
+names = [entry['Utility']['Name'] for entry in data]
+
+# Normalize names by stripping spaces and converting to lowercase
+normalized_names = [name.strip().lower() for name in names]
+
+unique_names = set(normalized_names)
+
+print("Total unique utilities (normalized):", len(unique_names))
+
+
+with open('electricity.json', encoding='utf-8') as file:
+    data = json.load(file)
+
+state_utilities = {}
+
+for entry in data:
+    state = entry['Utility']['State']
+    name = entry['Utility']['Name']
+    if state not in state_utilities:
+        state_utilities[state] = set()
+    state_utilities[state].add(name)
+
+for state, utilities in state_utilities.items():
+    print(f"{state}: {len(utilities)}")
+def summer_peak_demand():
+# the main idea is to get the info from each name in 1 state and find the average while still keeping it under the state
                   
-                  
-                  
-                  
+def winter_peak_demand():
                   
                   
                   
