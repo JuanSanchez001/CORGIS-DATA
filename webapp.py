@@ -26,7 +26,8 @@ def render_page2():
     
 @app.route("/p3")
 def render_page3():
-    return render_template('page3.html')
+    data_points = average_summer_peak_per_state()
+    return render_template('page3.html', data_points=data_points)
     
 @app.route('/utilities')
 def render_utilities():
@@ -89,15 +90,15 @@ def get_name_options(state):
     
     #connect to def demand_average_summer_and_winter() idk?
     
-   # dataPoints: [{ winter }]
-			#{ y: 212, label: "Italy" },
-			#{ y: 186, label: "China" },
-			#{ y: 272, label: "France" },
-			#{ y: 299, label: "Great Britain" },
-			#{ y: 270, label: "Germany" },
-			#{ y: 165, label: "Russia" },
-			#{ y: 896, label: "CA" } 
-		#]
+    '''dataPoints: [[{ winter }]
+			{ y: 333, label: "Italy" },
+			{ y: 333, label: "China" },
+			{ y: s["Demand"][], label: "France" },
+			{ y: 299, label: "Great Britain" },
+			{ y: 270, label: "Germany" },
+			{ y: 165, label: "Russia" },
+			{ y: 896, label: "CA" } 
+		]'''
     
         
         #dataPoints: [
@@ -153,7 +154,7 @@ def highest_electricity_producing_utility(state):
         
     return average_demand'''
       
-with open('electricity.json', encoding='utf-8') as file:
+'''with open('electricity.json', encoding='utf-8') as file:
     data = json.load(file)
 
 names = [entry['Utility']['Name'] for entry in data]
@@ -179,11 +180,35 @@ for entry in data:
     state_utilities[state].add(name)
 
 for state, utilities in state_utilities.items():
-    print(f"{state}: {len(utilities)}")
-def summer_peak_demand():
+    print(f"{state}: {len(utilities)}")'''
+    
+'''def summer_peak_demand():
+    with open('electricity.json', encoding='utf-8') as file:
+        data = json.load(file)
+    s_peak = []
+    for s in data:
+        summer = s['Demand'].get('Summer Peak')
+        state = s['Utility'].get('State')
+        if summer is not None and state is not None:
+            s_peak.append({'state': state, 'summer_peak': summer})
+    # Optionally create a string or HTML output
+    options = ""
+    for entry in s_peak:
+        options += Markup(f"<option value='{entry['state']}'>{entry['state']}: {entry['summer_peak']}</option>")
+    return options'''
+    
+'''def summer_peak_demand():
+    with open('electricity.json', encoding='utf-8') as file:
+        data = json.load(file)
+    s_peak=[]
+    for s in s_peak:
+        s_peak.append("x":s["Demand"]["Summer Peak"], "y":s["Utility"]["State"])
+    
+    return Markup(s_peak)'''
+    
 # the main idea is to get the info from each name in 1 state and find the average while still keeping it under the state
                   
-def winter_peak_demand():
+#def winter_peak_demand():
                   
                   
                   
@@ -199,6 +224,41 @@ def winter_peak_demand():
        #         highest = t["Retail"]["Total"]["Sales"]
         #        name = t["Utility"]["Name"]
     #return (name, highest) 
+'''def get_data_points():
+    with open('electricity.json', encoding='utf-8') as file:
+        data = json.load(file)
+    data_points = []
+    for entry in data:
+        state = entry['Utility'].get('State', 'Unknown')
+        summer_peak = entry['Demand'].get('Summer Peak')
+        if summer_peak is not None:
+            data_points.append({"label": state, "y": summer_peak})
+    return data_points'''
+def average_summer_peak_per_state():
+    with open('electricity.json', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    state_totals = {}
+    state_counts = {}
+
+    # Aggregate total summer peak demand and counts by state
+    for entry in data:
+        state = entry['Utility'].get('State')
+        summer_peak = entry.get('Demand', {}).get('Summer Peak')
+        if state and summer_peak is not None:
+            state_totals[state] = state_totals.get(state, 0) + summer_peak
+            state_counts[state] = state_counts.get(state, 0) + 1
+
+    # Compute averages
+    averages = []
+    for state, total in state_totals.items():
+        count = state_counts[state]
+        avg = total / count if count > 0 else 0
+        averages.append({"label": state, "y": avg})
+    
+    # Optionally sort by state name
+    averages.sort(key=lambda x: x["label"])
+    return averages    
     
 def is_localhost():
     """ Determines if app is running on localhost or not
