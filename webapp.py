@@ -26,7 +26,7 @@ def render_page2():
     
 @app.route("/p3")
 def render_page3():
-    data_points = average_summer_peak_per_state()
+    summer_peak = average_summer_peak_per_state()
     return render_template('page3.html', data_points=data_points)
     
 @app.route('/utilities')
@@ -153,34 +153,7 @@ def highest_electricity_producing_utility(state):
         s_demand = s['Demand']['Summer Peak']
         
     return average_demand'''
-      
-'''with open('electricity.json', encoding='utf-8') as file:
-    data = json.load(file)
 
-names = [entry['Utility']['Name'] for entry in data]
-
-# Normalize names by stripping spaces and converting to lowercase
-normalized_names = [name.strip().lower() for name in names]
-
-unique_names = set(normalized_names)
-
-print("Total unique utilities (normalized):", len(unique_names))
-
-
-with open('electricity.json', encoding='utf-8') as file:
-    data = json.load(file)
-
-state_utilities = {}
-
-for entry in data:
-    state = entry['Utility']['State']
-    name = entry['Utility']['Name']
-    if state not in state_utilities:
-        state_utilities[state] = set()
-    state_utilities[state].add(name)
-
-for state, utilities in state_utilities.items():
-    print(f"{state}: {len(utilities)}")'''
     
 '''def summer_peak_demand():
     with open('electricity.json', encoding='utf-8') as file:
@@ -197,69 +170,40 @@ for state, utilities in state_utilities.items():
         options += Markup(f"<option value='{entry['state']}'>{entry['state']}: {entry['summer_peak']}</option>")
     return options'''
     
-'''def summer_peak_demand():
+def summer_peak_demand():
     with open('electricity.json', encoding='utf-8') as file:
         data = json.load(file)
-    s_peak=[]
-    for s in s_peak:
-        s_peak.append("x":s["Demand"]["Summer Peak"], "y":s["Utility"]["State"])
-    
-    return Markup(s_peak)'''
+    summer_peak=[]
+    counts = {}
+    b_avg =0
+    #total_utilities = len(["Utility"]["Name"] in ["State"]["State"])
+    for s in data:
+         if "Demand" in s and "Summer Peak" in s["Demand"] and "Utility" in s and "State" in s["Utility"] and "Name" in s["Utility"]:
+        
+    b_avg = b_avg + 1
+    average = b_avg / total_utilities
+    return Markup(average)
     
 # the main idea is to get the info from each name in 1 state and find the average while still keeping it under the state
+                  #key value state= avg
+  
                   
-#def winter_peak_demand():
-                  
-                  
-                  
-#def name_retail_sale(state):
- #   """Return the name of a county in the given state with the highest percent of sales."""
-  #  with open('electricity.json') as electricity_data:
-   #     names = json.load(electricity_data)
-    #highest=0
-    #name = ""
-    #for t in names:
-     #   if t["Utility"]["State"] == state:
-      #      if t["Retail"]["Total"]["Sales"] > highest:
-       #         highest = t["Retail"]["Total"]["Sales"]
-        #        name = t["Utility"]["Name"]
-    #return (name, highest) 
-'''def get_data_points():
-    with open('electricity.json', encoding='utf-8') as file:
-        data = json.load(file)
-    data_points = []
-    for entry in data:
-        state = entry['Utility'].get('State', 'Unknown')
-        summer_peak = entry['Demand'].get('Summer Peak')
-        if summer_peak is not None:
-            data_points.append({"label": state, "y": summer_peak})
-    return data_points'''
-def average_summer_peak_per_state():
-    with open('electricity.json', encoding='utf-8') as file:
-        data = json.load(file)
-    
-    state_totals = {}
-    state_counts = {}
 
-    # Aggregate total summer peak demand and counts by state
-    for entry in data:
-        state = entry['Utility'].get('State')
-        summer_peak = entry.get('Demand', {}).get('Summer Peak')
-        if state and summer_peak is not None:
-            state_totals[state] = state_totals.get(state, 0) + summer_peak
-            state_counts[state] = state_counts.get(state, 0) + 1
 
-    # Compute averages
-    averages = []
-    for state, total in state_totals.items():
-        count = state_counts[state]
-        avg = total / count if count > 0 else 0
-        averages.append({"label": state, "y": avg})
+with open('electricity.json') as file:
+    data = json.load(file)
     
-    # Optionally sort by state name
-    averages.sort(key=lambda x: x["label"])
-    return averages    
-    
+    avg = {}
+    counts = {}
+    for entry in data:
+        state = entry['Utility']['State']
+        if state not in counts:
+            counts[state] = 0
+        counts[state] += 1 
+
+        average = state/counts        
+
+    print (counts)    
 def is_localhost():
     """ Determines if app is running on localhost or not
     Adapted from: https://stackoverflow.com/questions/17077863/how-to-see-if-a-flask-app-is-being-run-on-localhost

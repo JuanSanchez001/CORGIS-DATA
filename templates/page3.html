@@ -34,7 +34,7 @@ window.onload = function () {
             color: "Gold",
             dataPoints: [
                 {% for point in data_points %}
-                    { y: {{ point.y }}, label: "{{ point.label }}" }{{ "," if not loop.last }}
+                    { y: {{ demand.y]] }}, label: "{{ demand.label }}" }{{ "," if not loop.last }}
                 {% endfor %}
             ]
         },
