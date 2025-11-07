@@ -4,7 +4,7 @@
 
 {% block title %}Page3{% endblock %}
 
-{% block content %} <!-- Total Demand in Summer and Winter->
+{% block content %} <!-- average of each state-->
 <!--https://www.perplexity.ai/search/from-flask-import-flask-reques-jGCKsyczS7u8jyDQk1roww-->
 <script type="text/javascript">
 window.onload = function () {
@@ -33,19 +33,20 @@ window.onload = function () {
             showInLegend: true,
             name: "Summer",
             color: "Gold",
-            dataPoints: [{% for state, demand in data_points1.items() %}
+            dataPoints:[
+  
+  {% for state, demand in data_points1.items() %}
     { y: {{ demand }}, label: "{{ state }}" }{% if not loop.last %},{% endif %}
   {% endfor %}
+]
 
-
-            ]
         },
         {
             type: "bar",
             showInLegend: true,
             name: "Winter",
             color: "CornflowerBlue",
-            dataPoints: [{% for state, demand in data_points1.items() %}
+            dataPoints: [{% for state, demand in data_points2.items() %}
     { y: {{ demand }}, label: "{{ state }}" }{% if not loop.last %},{% endif %}
   {% endfor %}
             
@@ -83,3 +84,53 @@ window.onload = function () {
 </script>
 <div id="chartContainer" style="height: 370px; width: 100%;"></div>
 {% endblock %}
+<!--{ y: {{ total_summer["AL"] }}, label: "AL" },
+  { y: {{ total_summer["AK"] }}, label: "AK" },
+  { y: {{ total_summer["AZ"] }}, label: "AZ" },
+  { y: {{ total_summer["AR"] }}, label: "AR" },
+  { y: {{ total_summer["CA"] }}, label: "CA" },
+  { y: {{ total_summer["CO"] }}, label: "CO" },
+  { y: {{ total_summer["CT"] }}, label: "CT" },
+  { y: {{ total_summer["DE"] }}, label: "DE" },
+  { y: {{ total_summer["FL"] }}, label: "FL" },
+  { y: {{ total_summer["GA"] }}, label: "GA" },
+  { y: {{ total_summer["HI"] }}, label: "HI" },
+  { y: {{ total_summer["ID"] }}, label: "ID" },
+  { y: {{ total_summer["IL"] }}, label: "IL" },
+  { y: {{ total_summer["IN"] }}, label: "IN" },
+  { y: {{ total_summer["IA"] }}, label: "IA" },
+  { y: {{ total_summer["KS"] }}, label: "KS" },
+  { y: {{ total_summer["KY"] }}, label: "KY" },
+  { y: {{ total_summer["LA"] }}, label: "LA" },
+  { y: {{ total_summer["ME"] }}, label: "ME" },
+  { y: {{ total_summer["MD"] }}, label: "MD" },
+  { y: {{ total_summer["MA"] }}, label: "MA" },
+  { y: {{ total_summer["MI"] }}, label: "MI" },
+  { y: {{ total_summer["MN"] }}, label: "MN" },
+  { y: {{ total_summer["MS"] }}, label: "MS" },
+  { y: {{ total_summer["MO"] }}, label: "MO" },
+  { y: {{ total_summer["MT"] }}, label: "MT" },
+  { y: {{ total_summer["NE"] }}, label: "NE" },
+  { y: {{ total_summer["NV"] }}, label: "NV" },
+  { y: {{ total_summer["NH"] }}, label: "NH" },
+  { y: {{ total_summer["NJ"] }}, label: "NJ" },
+  { y: {{ total_summer["NM"] }}, label: "NM" },
+  { y: {{ total_summer["NY"] }}, label: "NY" },
+  { y: {{ total_summer["NC"] }}, label: "NC" },
+  { y: {{ total_summer["ND"] }}, label: "ND" },
+  { y: {{ total_summer["OH"] }}, label: "OH" },
+  { y: {{ total_summer["OK"] }}, label: "OK" },
+  { y: {{ total_summer["OR"] }}, label: "OR" },
+  { y: {{ total_summer["PA"] }}, label: "PA" },
+  { y: {{ total_summer["RI"] }}, label: "RI" },
+  { y: {{ total_summer["SC"] }}, label: "SC" },
+  { y: {{ total_summer["SD"] }}, label: "SD" },
+  { y: {{ total_summer["TN"] }}, label: "TN" },
+  { y: {{ total_summer["TX"] }}, label: "TX" },
+  { y: {{ total_summer["UT"] }}, label: "UT" },
+  { y: {{ total_summer["VT"] }}, label: "VT" },
+  { y: {{ total_summer["VA"] }}, label: "VA" },
+  { y: {{ total_summer["WA"] }}, label: "WA" },
+  { y: {{ total_summer["WV"] }}, label: "WV" },
+  { y: {{ total_summer["WI"] }}, label: "WI" },
+  { y: {{ total_summer["WY"] }}, label: "WY" }-->
