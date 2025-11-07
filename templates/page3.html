@@ -4,7 +4,8 @@
 
 {% block title %}Page3{% endblock %}
 
-{% block content %} <!-- average of each state-->
+{% block content %} <!-- Total Demand in Summer and Winter->
+<!--https://www.perplexity.ai/search/from-flask-import-flask-reques-jGCKsyczS7u8jyDQk1roww-->
 <script type="text/javascript">
 window.onload = function () {
     var chart = new CanvasJS.Chart("chartContainer", {
@@ -32,10 +33,11 @@ window.onload = function () {
             showInLegend: true,
             name: "Summer",
             color: "Gold",
-            dataPoints: [
-                {% for point in data_points %}
-                    { y: {{ demand.y]] }}, label: "{{ demand.label }}" }{{ "," if not loop.last }}
-                {% endfor %}
+            dataPoints: [{% for state, demand in data_points1.items() %}
+    { y: {{ demand }}, label: "{{ state }}" }{% if not loop.last %},{% endif %}
+  {% endfor %}
+
+
             ]
         },
         {
@@ -43,7 +45,10 @@ window.onload = function () {
             showInLegend: true,
             name: "Winter",
             color: "CornflowerBlue",
-            dataPoints: [
+            dataPoints: [{% for state, demand in data_points1.items() %}
+    { y: {{ demand }}, label: "{{ state }}" }{% if not loop.last %},{% endif %}
+  {% endfor %}
+            
                 // add summer data points similarly if available
             ]
         }]

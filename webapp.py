@@ -26,8 +26,9 @@ def render_page2():
     
 @app.route("/p3")
 def render_page3():
-    summer_peak = average_summer_peak_per_state()
-    return render_template('page3.html', data_points=data_points)
+    total_summer = summer_peak_demand()
+    total_winter = winter_peak_demand()
+    return render_template('page3.html', data_points1=total_summer, data_points2=total_winter)
     
 @app.route('/utilities')
 def render_utilities():
@@ -35,10 +36,6 @@ def render_utilities():
     state = request.args.get('state')
     names = get_name_options(state)
     name = request.args.get('name')
-    #county = name_retail_sale(state, name)
-    #demand = demand_per_utility(state)
-    #sale= "In " + state + ", the electrical utility " + county[0] + " sold (" + str(county[1]) + ") megawatts of electricity" + "."
-   
     return render_template('page1.html', state_options=states, name_options=names)
     
 #https://www.perplexity.ai/search/why-is-this-giving-me-this-err-s_sLBpCpTs6xQP9Fqu_vtQ  (using f-strings)       
@@ -145,65 +142,38 @@ def highest_electricity_producing_utility(state):
     			name = u["Utility"]["Name"]
     return (name, highest)
     	
-'''def demand_average_summer_and_winter():
-    with open('electricity.json') as electricity_data:
-        s_demand = json.load(electricity_data)
-    average_demand=[]
-    for s in s_demand:
-        s_demand = s['Demand']['Summer Peak']
-        
-    return average_demand'''
-
-    
-'''def summer_peak_demand():
-    with open('electricity.json', encoding='utf-8') as file:
-        data = json.load(file)
-    s_peak = []
-    for s in data:
-        summer = s['Demand'].get('Summer Peak')
-        state = s['Utility'].get('State')
-        if summer is not None and state is not None:
-            s_peak.append({'state': state, 'summer_peak': summer})
-    # Optionally create a string or HTML output
-    options = ""
-    for entry in s_peak:
-        options += Markup(f"<option value='{entry['state']}'>{entry['state']}: {entry['summer_peak']}</option>")
-    return options'''
-    
-def summer_peak_demand():
-    with open('electricity.json', encoding='utf-8') as file:
-        data = json.load(file)
-    summer_peak=[]
-    counts = {}
-    b_avg =0
-    #total_utilities = len(["Utility"]["Name"] in ["State"]["State"])
-    for s in data:
-         if "Demand" in s and "Summer Peak" in s["Demand"] and "Utility" in s and "State" in s["Utility"] and "Name" in s["Utility"]:
-        
-    b_avg = b_avg + 1
-    average = b_avg / total_utilities
-    return Markup(average)
-    
-# the main idea is to get the info from each name in 1 state and find the average while still keeping it under the state
+# the main idea is to get the info from each name in 1 state 
                   #key value state= avg
-  
-                  
-
-
-with open('electricity.json') as file:
-    data = json.load(file)
-    
-    avg = {}
+def summer_peak_demand():                 
+    with open('electricity.json') as file:
+        data = json.load(file)             
+    total_summer = {}
     counts = {}
-    for entry in data:
-        state = entry['Utility']['State']
-        if state not in counts:
+    for d in data:
+        state = d["Utility"]["State"]
+        sdemand = d["Demand"]["Summer Peak"]
+        if state not in total_summer:
+            total_summer[state] = 0
             counts[state] = 0
-        counts[state] += 1 
-
-        average = state/counts        
-
-    print (counts)    
+        total_summer[state] += sdemand
+        total_summer[state] = total_summer[state] 
+    return total_summer
+    
+def winter_peak_demand():                 
+    with open('electricity.json') as file:
+        data = json.load(file)             
+    total_winter = {}
+    counts = {}
+    for d in data:
+        state = d["Utility"]["State"]
+        wdemand = d["Demand"]["Winter Peak"]
+        if state not in total_winter:
+            total_winter[state] = 0
+            counts[state] = 0
+        total_winter[state] += wdemand
+        total_winter[state] = total_winter[state] 
+    return total_winter    
+ 
 def is_localhost():
     """ Determines if app is running on localhost or not
     Adapted from: https://stackoverflow.com/questions/17077863/how-to-see-if-a-flask-app-is-being-run-on-localhost
