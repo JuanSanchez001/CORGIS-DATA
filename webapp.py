@@ -8,27 +8,36 @@ app = Flask(__name__) #__name__ = "__main__" if this is the file that was run.  
 
 @app.route("/")
 def render_main():
+
     return render_template('home.html')
+    
 
 @app.route("/p1")
 def render_page1():
     states = get_state_options()
-   
     names = get_name_options(states)
-    return render_template('page1.html', state_options=states, name_options=names)#, county_options=counties')
+    
+    return render_template('page1.html', state_options=states, name_options=names)
+    
     
 @app.route("/p2")
 def render_page2():
     states = get_state_options()
-
     names = get_name_options(states)
+    
     return render_template('page2.html', state_options=states, name_options=names)
+    
     
 @app.route("/p3")
 def render_page3():
     total_summer = summer_peak_demand()
     total_winter = winter_peak_demand()
-    return render_template('page3.html', data_points1=total_summer, data_points2=total_winter)
+    #https://www.perplexity.ai/search/why-use-total-winter-state-wde-wqLX7z5MS4aN.PwXQyq9qA( used to find sort )
+    sorted_summer = dict(sorted(total_summer.items()))
+    sorted_winter = dict(sorted(total_winter.items()))
+    
+    return render_template('page3.html', data_points1=sorted_summer, data_points2=sorted_winter)
+    
     
 @app.route('/utilities')
 def render_utilities():
@@ -36,7 +45,9 @@ def render_utilities():
     state = request.args.get('state')
     names = get_name_options(state)
     name = request.args.get('name')
+    
     return render_template('page1.html', state_options=states, name_options=names)
+    
     
 #https://www.perplexity.ai/search/why-is-this-giving-me-this-err-s_sLBpCpTs6xQP9Fqu_vtQ  (using f-strings)       
 @app.route('/customers')
@@ -65,7 +76,6 @@ def render_sources():
     return render_template('page2.html', sources=source) 
     
     
-
 def get_state_options():
     with open('electricity.json') as electricity_data:
         utilities = json.load(electricity_data)
@@ -78,16 +88,16 @@ def get_state_options():
 def get_name_options(state):
     with open('electricity.json') as electricity_data:
         utilities = json.load(electricity_data)
-    # it sorts it and then looks to see if the state they selected
+    # it sorts it and then looks to see if the state they selected = state
     names = sorted({u["Utility"]["Name"] for u in utilities if u["Utility"]["State"] == state})
     options = ""
     for n in names:
         options += Markup("<option value=\"" + n + "\">" + n + "</option>") #Use Markup so <, >, " are not escaped lt, gt, etc.
     return options
     
-    #connect to def demand_average_summer_and_winter() idk?
+    #connect to def summeR and winter peak(TBD)
     
-    '''dataPoints: [[{ winter }]
+    '''dataPoints: [[{ winter }] 
 			{ y: 333, label: "Italy" },
 			{ y: 333, label: "China" },
 			{ y: s["Demand"][], label: "France" },
@@ -95,7 +105,7 @@ def get_name_options(state):
 			{ y: 270, label: "Germany" },
 			{ y: 165, label: "Russia" },
 			{ y: 896, label: "CA" } 
-		]'''
+		]
     
         
         #dataPoints: [
@@ -106,7 +116,7 @@ def get_name_options(state):
 			#{ y: 285, label: "Ge" },
 			#{ y: 188, label: "Russia" },
 			#{ y: 788, label: "CA" }
-		#]
+		#]'''
         
     
 def total_customers_per_utility(name):
@@ -142,8 +152,6 @@ def highest_electricity_producing_utility(state):
     			name = u["Utility"]["Name"]
     return (name, highest)
     	
-# the main idea is to get the info from each name in 1 state 
-                  #key value state= avg
 def summer_peak_demand():                 
     with open('electricity.json') as file:
         data = json.load(file)             
@@ -183,4 +191,4 @@ def is_localhost():
     return root_url == developer_url
 
 if __name__=="__main__":
-    app.run(debug=True)
+    app.run(debug=False)
